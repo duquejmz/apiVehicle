@@ -37,9 +37,27 @@ class ApiService {
         'model': modelo
       })
       );
-      if (response.statusCode != 201) {
+      if (response.statusCode != 200) {
         throw Exception("Error al registrar vehículo");
         }
     }
 
-}
+    // Modificar un vehículo
+    Future<void> updateVehicle(String id, Vehicle vehicle) async {
+      final response = await http.put(
+        Uri.parse('$baseUrl/$id'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(vehicle.toJson()),
+        );
+        if (response.statusCode != 200) {
+          throw Exception("Error al modificar vehículo");
+          }
+      }
+
+      Future<void> deleteVehicle(String id) async {
+        final response = await http.delete(Uri.parse('$baseUrl/$id'));
+        if (response.statusCode != 200) {
+          throw Exception("Error al eliminar vehículo");
+          }
+      }
+  }
