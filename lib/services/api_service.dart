@@ -55,6 +55,8 @@ class ApiService {
       }
 
       Future<void> deleteVehicle(String id) async {
+        final url = '$baseUrl$id';
+        print('URL generada para eliminar: $url');
         final response = await http.delete(Uri.parse('$baseUrl/$id'));
         if (response.statusCode != 200) {
           throw Exception("Error al eliminar vehículo");

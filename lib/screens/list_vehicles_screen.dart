@@ -15,11 +15,11 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
 
   List<Vehicle> vehicles = [];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   loadVehicles();
-  // }
+   @override
+   void initState() {
+     super.initState();
+     loadVehicles();
+  }
 
   Future<void> loadVehicles() async {
     try {
@@ -61,6 +61,49 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sucedio un problema actualizando el vehiculo'))
         );
+    }
+  }
+
+  void showDeleteModalVehicle(String id, String plate, String color, int model) async {
+    final confirmDelete = await showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Eliminación del vehiculo'),
+          content: Text('¿Estas seguro de eliminar el registro?'),
+          actions: [
+            TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                }, 
+                label: Text('Cancelar'),
+                icon: Icon(Icons.cancel),
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 224, 171, 217),
+                ),
+              ),
+
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                }, 
+                label: Text('Confirmar'),
+                icon: Icon(Icons.confirmation_number),
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 242, 215, 238),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+    if (confirmDelete == true) {
+      try {
+        await apiService.deleteVehicle(id);
+        loadVehicles();
+      } catch (e) {
+        print('No se pudo eliminar el objeto');
+      }
     }
   }
 
@@ -188,14 +231,6 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
     );
   }
 
-  void showDeleteModalVehicle(String id, String plate, String color, int model) async {
-    try {
-      await apiService.deleteVehicle(id);
-    } catch (e) {
-      print('No se pudo eliminar el vehiculo');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,7 +261,7 @@ class _ListVehiclesScreenState extends State<ListVehiclesScreen> {
                   SizedBox(width: 30),
                   IconButton(
                     onPressed: () {
-                      showDeleteModalVehicle(vehicle.id, vehicle.plate , vehicle.color, vehicle.model);
+                      showDeleteModalVehicle(vehicle.id, vehicle.plate, vehicle.color, vehicle.model);
                     }, 
                     icon: Icon(Icons.delete))
                 ]
